@@ -61,6 +61,7 @@ Theta2_grad = zeros(size(Theta2));
 %               the regularization separately and then add them to Theta1_grad
 %               and Theta2_grad from Part 2.
 %
+
 % feed forward
 padding_1s = ones(length(X(:, 1)), 1);
 X = [padding_1s X];
@@ -84,7 +85,6 @@ end
 
 % calculating cost
 J_vector = zeros(1, num_labels);
-size(J_vector)
 
 for i = 1:m
     J_vector = J_vector + (-binary_y(i, :) .* log(a3(i, :))) - ((1 - binary_y(i, :)) .* log(1 - a3(i, :)));
@@ -92,7 +92,34 @@ end
 
 J = sum(J_vector) / m;
 
+% Regularized cost term
+regularization_term = (lambda/(2*m))*((sum(sum(Theta1(:,2:end).^2))) + sum(sum(Theta2(:,2:end).^2)));
+J = J + regularization_term;
 % -------------------------------------------------------------
+
+% Back propagration
+for t = 1:m
+    % feed forward
+    a1 = X(t, :);
+    a2 = [1 sigmoid(a1 * Theta1')];
+    z2 = [1 (a1 * Theta1')];
+    a3 = sigmoid(a2 * Theta2');
+        
+    % backwards propagate
+    delta3 = a3 - binary_y(t, :);    
+    delta2 = (Theta2' * delta3')' .* sigmoidGradient(z2);
+    
+    % accumulating gradients
+    Theta1_grad = Theta1_grad + delta2(2:end)' * a1;
+    Theta2_grad = Theta2_grad + delta3' * a2;
+    
+    % adding regularization term
+    Theta1_grad(:, 2:end) = Theta1_grad(:, 2:end) + (lambda / m) * Theta1(:, 2:end);
+    Theta2_grad(:, 2:end) = Theta2_grad(:, 2:end) + (lambda / m) * Theta2(:, 2:end);
+end
+
+Theta1_grad = Theta1_grad / m;
+Theta2_grad = Theta2_grad / m;
 
 % =========================================================================
 
