@@ -97,17 +97,12 @@ while ~isempty(email_contents)
     %       str2). It will return 1 only if the two strings are equivalent.
     %
 
-
-
-
-
-
-
-
-
+    if ismember(str, vocabList)
+        index = strmatch(str, vocabList, 'exact');
+        word_indices = [word_indices ; index];
+    end
 
     % =============================================================
-
 
     % Print to screen, ensuring that the output lines are not too long
     if (l + length(str) + 1) > 78
