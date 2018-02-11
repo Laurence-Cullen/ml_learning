@@ -33,7 +33,6 @@ for j = 1:K
         if idx(i) == j
             number_of_centroid_members = number_of_centroid_members + 1;
             running_total = running_total + X(i, :);
-            
         end
     end
     centroids(j, :) = running_total ./ number_of_centroid_members;
